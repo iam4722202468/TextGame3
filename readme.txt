@@ -1,0 +1,257 @@
+/////////////////////
+//iam's game readme//
+/////////////////////
+
+________________________________________
+Part 1. Introduction
+________________________________________
+
+This is a program that simplifies making text based games
+
+Each place, or 'storyline' has a name. These names are text surrounded by semicolons ex. ;1;.
+The storyline tells the game where to go, and which parts of the game to read when.
+
+To declare a storyline, just put the storyline name on a line in the game.txt file, along with a text: declaration, and brackets.
+
+ex. 
+~~~~~~~~~~
+;1;
+{
+	text: You are at storyline ;1;
+}
+~~~~~~~~~~
+
+The text declaration is the text that is read out when the player enters the storyline.
+In-game, this would look something like:
+
+~~~~~~~~~~
+You are at storyline ;1;
+~~~~~~~~~~
+
+________________________________________
+Part 2. File header                    
+________________________________________
+
+This is where you declare all the initial values
+
+~~~~~~~~~~
+//interpreter created by iam//  <-- must go always go on first line
+
+startpoint: ;1;      <-- specifies where the game starts*
+health: 998          <-- specifies player starting health*
+maxinventory: 5000    <-- specifies the maximum amount of items the player can have
+maxhealth: 999       <-- specifies the maximum health the player can have
+playername: nigger      <-- specifies the player name
+
+~~~~~~~~~~
+
+Note: Items marked with * must be included in header
+Note: If player name is not specified, player will be prompted to choose their name
+
+________________________________________
+Part 3. Options                    
+________________________________________
+
+One of the things that you can add to storylines is options. 
+
+Options are declared by Option: (text), and give users a choice of what storyline to go to next.
+If an option line if found, The game will prompt users for an option number to go to.
+Option numbers are decided by the order that the options are found in; if there are 2 options, the first option is option 1 and the second is option 2
+
+If not otherwise specified, when an option is chosen, the option number is added to the current story.
+ex. if the storyline is ;1; and option 1 is chosen, the storyline becomes ;1.1;
+
+ex.
+~~~~~~~~~~
+;1;
+{
+	text: You are at storyline ;1;
+		option: go to storyline ;1.1;
+}
+
+;1.1;
+{
+	text: You are at storyline ;1;
+~~~~~~~~~~
+
+________________________________________
+Part 4. Conditional options              
+________________________________________
+
+Conditional options work almost exactly the same way as options, but are only shown if the condition is met.
+
+syntax: option_condition: (condition)|(value)|(option title)
+
+ex.
+~~~~~~~~~~
+;1;
+{
+	text: This is an example of conditional options
+		option_condition: life=|100|Your life is 100
+		option_condition: life<|100|Your life is under 100
+		option_condition: life>|100|Your life is over 100
+}
+
+;1.1;
+{
+	text: Option successfully chosen
+		endgame: End of example
+}
+~~~~~~~~~~
+
+You can also place an exclamation mark before the condition to show it if the condition is not met
+
+ex.
+~~~~~~~~~~
+;1;
+{
+	text: This is an example of logical not's
+		option_condition: !life=|0|Your life is not 0
+}
+~~~~~~~~~~
+
+List of available conditions, examples and explinations:
+
+need= need> need<	:: need(type)|(item amount)|(item name)|(text)|
+					:: need=|1|potato|You have 1 potato|
+					:: used to detect the amount of an item a player has
+
+life= life> life<	:: life(type)|(number)|(text)|
+					:: life>|100|Your life is above 100|
+					:: used to detect the player health
+                 
+name				:: name|(name)|(text)|
+					:: used to check the player name
+					
+var					:: var|(var name)|(value)|(text)|
+					:: used to check a variable value
+    
+var_and				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
+					:: logical AND for 2 conditions
+					
+var_or				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
+					:: logical OR for 2 conditions
+					
+var_not				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
+					:: logical NOT for 2 conditions
+					
+var_nand			:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
+					:: logical NAND for 2 conditions
+
+var_nor				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
+					:: logical NOR for 2 conditions
+
+________________________________________
+Part 5. Info lines
+________________________________________
+
+Info lines are lines that come after the text: line, and work pretty much the same way as the text line, except that can be placed anywhere in the scenario
+
+ex.
+~~~~~~~~~~
+;1.store;
+{
+	text: This is an example of info lines
+		info: These items cost 10 gold
+		option: Potato
+		option: Cow
+		option: Penguin
+		info: These items cost 20 gold
+		option: Car
+		option: Watermelon
+		option: Sword
+}
+~~~~~~~~~~
+
+________________________________________
+Part 6. Actions                    
+________________________________________
+
+Actions are placed within a scenario. They can be placed after an option line to only be ran when that option is chosen, or they can be placed alone in a scenario to be ran when the scenario is read.
+
+List of actions with explination, syntax and examples:
+
+endgame		:: This ends the game with a message to the user 
+			:: endgame: (message) 
+			:: endgame: You lost
+
+goto		:: This can be used to send the player to a certain scenario in the game 
+			:: goto: (scenarioname) 
+			:: goto: ;1;
+
+item		:: This is used to give the player an item. When the play has too many items they are prompted to remove some
+			:: item: (item name) OR item: (amount)|(item name)| 
+			:: item: potato OR item: 2|potato|
+
+item_one	:: This is used when you only want the player to have one of a certain item 
+			:: item_one: (item name) 
+			:: item_one: Flashlight
+
+use			:: Remove an item from your inventory. If item is not found user will recieve "Item not found" message
+			:: use: (item name) OR use: (amount)|(item name)| 
+			:: use: potato OR use: 2|potato|
+
+need		:: This checks if the player has a certain amount of an item, then goes to the scenario that is indicated
+			:: need: (amount of item)|(item name)|(scenatio to go to)|
+			:: need: 1|potato|;1.4;|
+
+rand		:: This randomly goes to one of the scenarios provided. You can provide any number of scenarios to chose from
+			:: rand: (scenario 1)|(scenario 2)|(scenario 3)|
+			:: rand: ;1;|;1.4;|;1.potato;|
+
+health_gain	:: Makes the player gain health. If the health goes over the max health the health is set to the max health
+			:: health_gain: (amount to gain)
+			:: health_gain: 20
+
+health_lose	:: Makes the player lose health. If the player dies, a message is shown
+			:: health_lose: (amount)|(message to display if player dies)|
+			:: health_lose: 20|You died :O|
+
+var			:: create / set a variable that can be used later
+			:: var: (name)|(value)|
+			:: var: moo|asdf|
+
+set			:: Set the variables that are found in the file header. List of values that can be set:
+				- health, name, maxinventory, maxhealth
+			:: set: (name)|(value)|
+			:: set: name|iam|
+
+command		:: Run a command. Commands available:
+				- clearinv, clearvariables, resetplayer (reset the file header variables)
+			:: command: (command)
+			:: command: resetplayer
+
+________________________________________
+Part 7. Macros                    
+________________________________________
+
+There are a few simple macros that can be used in the option line, and the action lines. When the line is read in macros are replaced with the value that they lead to
+
+List of macros (in the order they are read in) with explaination and example:
+
+NAME		:: Returns the player name
+			:: text: Your name is $(NAME)
+
+MAXHEALTH	:: Returns the max health
+			:: text: Your max health is $(MAXHEALTH)
+
+HEALTH		:: Returns the current player health
+			:: text: Your current health is $(HEALTH)
+
+INVAMOUNT	:: Returns the amount of items in the player's inventory
+			:: text: You have $(INVAMOUNT) items in their inventory
+
+ENDL		:: Returns a newline char
+			:: text: Line 1: fdsfdsafa$(ENDL)Line 2: dfdgf
+
+ITEMAMOUNT	:: Returns the amount of an item a player has
+			:: text: You have $(ITEMAMOUNT|potato) potatoes
+
+MAXINV		:: Returns the max inventory amount
+			:: text: You have $(MAXINV) inventory slots
+
+VAR			:: Returns the value of a variable. Returns NULL if variable is not set
+			:: text: The value of moo is $(VAR|moo)
+
+INPUT		:: Prompts the player to input text
+			:: var: moo|$(INPUT|	Please input moo: )|

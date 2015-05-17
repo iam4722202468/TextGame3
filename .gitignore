@@ -1,0 +1,6 @@
+*.exe
+/build
+/build_win
+/Games
+*.zip
+game
