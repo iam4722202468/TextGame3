@@ -5,7 +5,7 @@
 using namespace std;
 
 bool checkcondition(string line);
-void readtext(string storyline);
+int readtext(string storyline);
 bool doaction(string action);
 
 #endif

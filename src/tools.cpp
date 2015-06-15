@@ -7,6 +7,7 @@
 #include "error.h"
 #include "player.h"
 #include "tools.h"
+#include "actions.h"
 
 // revise this
 string removewhitespace(string str)
@@ -64,34 +65,34 @@ void stringsplit(char splitat, string line, vector<string>& newtext)
 }
 
 //add macros
-string fixtext(string line)
+string fixtext(string line, bool include_input)
 {
 	vector<int> found;
 	
 	search(line, "$(NAME)", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),7);
-		line.insert(found.at(0), player.optionalinfo[0]);
+		line.erase(found.at(found.size()-1),7);
+		line.insert(found.at(found.size()-1), player.optionalinfo[0]);
 		search(line, "$(NAME)", found);
 	}
 	
 	search(line, "$(MAXHEALTH)", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),12);
+		line.erase(found.at(found.size()-1),12);
 		if(player.optionalinfo[2] == "")
-			line.insert(found.at(0), "inf.");
+			line.insert(found.at(found.size()-1), "inf.");
 		else
-			line.insert(found.at(0), player.optionalinfo[2]);
+			line.insert(found.at(found.size()-1), player.optionalinfo[2]);
 		search(line, "$(MAXHEALTH)", found);
 	}
 	
 	search(line, "$(HEALTH)", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),9);
-		line.insert(found.at(0), player.neededinfo[1]);
+		line.erase(found.at(found.size()-1),9);
+		line.insert(found.at(found.size()-1), player.neededinfo[1]);
 		search(line, "$(HEALTH)", found);
 	}
 		
@@ -99,80 +100,106 @@ string fixtext(string line)
 	while(found.size() > 0)
 	{
 		int amountofitems = 0;
-		line.erase(found.at(0),12);
+		line.erase(found.at(found.size()-1),12);
 		
 		for(int place = 0; place < player.inventory.size(); place++)
 			amountofitems += player.invamount.at(place);
 		
-		line.insert(found.at(0), to_string(amountofitems));
+		line.insert(found.at(found.size()-1), to_string(amountofitems));
 		search(line, "$(INVAMOUNT)", found);
 	}
 	
 	search(line, "$(ENDL)", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),7);
-		line.insert(found.at(0), "\n");
+		line.erase(found.at(found.size()-1),7);
+		line.insert(found.at(found.size()-1), "\n");
 		search(line, "$(ENDL)", found);
 	}
 	
 	search(line, "$(ITEMAMOUNT|", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),13);
+		line.erase(found.at(found.size()-1),13);
 		string itemname = "";
 		
-		for(int y = found.at(0); y < line.size(); y++)
+		for(int y = found.at(found.size()-1); y < line.size(); y++)
 		{
 			if(line[y] == ')')
 				break;
 			itemname += line[y];
 		}
 		
-		line.erase(found.at(0),itemname.size() + 1);
+		line.erase(found.at(found.size()-1),itemname.size() + 1);
 
-		line.insert(found.at(0), to_string(getamount(itemname)));
+		line.insert(found.at(found.size()-1), to_string(getamount(itemname)));
 		search(line, "$(ITEMAMOUNT|", found);
 	}
 	
 	search(line, "$(MAXINV)", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),9);
+		line.erase(found.at(found.size()-1),9);
 		if(player.optionalinfo[1] == "")
-			line.insert(found.at(0), "inf.");
+			line.insert(found.at(found.size()-1), "inf.");
 		else
-			line.insert(found.at(0), player.optionalinfo[1]);
+			line.insert(found.at(found.size()-1), player.optionalinfo[1]);
 		search(line, "$(MAXINV)", found);
 	}
 	
 	search(line, "$(VAR|", found);
 	while(found.size() > 0)
 	{
-		line.erase(found.at(0),6);
+		line.erase(found.at(found.size()-1),6);
 		string varname = "";
 		
-		for(int y = found.at(0); y < line.size(); y++)
+		for(int y = found.at(found.size()-1); y < line.size(); y++)
 		{
 			if(line[y] == ')')
 				break;
 			varname += line[y];
 		}
 		
-		line.erase(found.at(0),varname.size() + 1);
+		line.erase(found.at(found.size()-1),varname.size() + 1);
 		
 		int varplace = getvar(varname);
 		
 		if(varplace >= 0)
-			line.insert(found.at(0), player.varvalue.at(varplace));
+			line.insert(found.at(found.size()-1), player.varvalue.at(varplace));
 		else
-			line.insert(found.at(0), "NULL");
+			line.insert(found.at(found.size()-1), "NULL");
 		
 		search(line, "$(VAR|", found);
 	}
 	
-	search(line, "$(INPUT|", found);
+	search(line, "$(RAND_VAR|", found);
 	while(found.size() > 0)
+	{
+		line.erase(found.at(found.size()-1), 11);
+		
+		string randline = "";
+		for(int y = found.at(found.size()-1); y < line.size(); y++)
+		{
+			if(line[y] == ')')
+				break;
+			randline += line[y];
+		}
+		
+		line.erase(found.at(found.size()-1),randline.size() + 1);
+		string gettext = dorand(randline);
+		
+		int varplace = getvar(gettext);
+		
+		if(varplace >= 0)
+			line.insert(found.at(found.size()-1), player.varvalue.at(varplace));
+		else
+			line.insert(found.at(found.size()-1), "NULL");
+		
+		search(line, "$(RAND_VAR|", found);
+	}
+	
+	search(line, "$(INPUT|", found);
+	while(found.size() > 0 and include_input)
 	{
 		line.erase(found.at(0),8);
 		string text = "";
@@ -187,12 +214,12 @@ string fixtext(string line)
 		line.erase(found.at(0),text.size() + 1);
 		
 		cout << "\n" << text;
-
+		
 		string inputtext;
 		
-		cin.ignore();
+		cin.ignore(0);
 		getline(cin, inputtext);
-		
+
 		line.insert(found.at(0), inputtext);
 		
 		cout << endl;
@@ -234,6 +261,8 @@ bool findstoryline(string storyline)
 		while(getline(myfile,line))
 		{
 			line = removewhitespace(line);
+			if(line[0] == ';')
+				line = fixtext(line,true);
 			
 			if(line.find(storyline) == 0)
 				foundstoryline = true;

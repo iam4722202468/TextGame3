@@ -39,9 +39,9 @@ This is where you declare all the initial values
 
 startpoint: ;1;      <-- specifies where the game starts*
 health: 998          <-- specifies player starting health*
-maxinventory: 5000    <-- specifies the maximum amount of items the player can have
+maxinventory: 5000   <-- specifies the maximum amount of items the player can have
 maxhealth: 999       <-- specifies the maximum health the player can have
-playername: nigger      <-- specifies the player name
+playername: ace      <-- specifies the player name
 
 ~~~~~~~~~~
 
@@ -255,3 +255,10 @@ VAR			:: Returns the value of a variable. Returns NULL if variable is not set
 
 INPUT		:: Prompts the player to input text
 			:: var: moo|$(INPUT|	Please input moo: )|
+
+________________________________________
+Part 8. Modes                    
+________________________________________
+
+mode: chose first
+	makes the program chose the first possible option by default

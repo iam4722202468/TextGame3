@@ -154,7 +154,7 @@ bool initstory()
 
 void titlesequence()
 {
-	cout << "Welcome to iam's game!\n\n";
+	cout << "Built on iam's interpreter\n\n";
 	
 	cout << "////////////////How to Play///////////////\n";
 	cout << " 1. Type in path number you want to chose\n";

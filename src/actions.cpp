@@ -177,14 +177,13 @@ string dorand(string line)
 {
 	vector<string> parts;
 	stringsplit('|', line, parts);
-	
-	if(parts.size() == 0)
-		return "";
 
 	if(removewhitespace(parts.at(parts.size()-1)) == "")
 		parts.pop_back();
 
-	srand(time(NULL));
+	if(parts.size() == 0)
+		return "";
+		
 	int randnum = rand() % parts.size();
 	
 	return parts.at(randnum);

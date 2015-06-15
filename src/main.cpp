@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <time.h>
 
 #include "error.h"
 #include "player.h"
@@ -212,7 +213,7 @@ bool checkcondition(string line)
 	return false;
 }
 
-void readtext(string storyline)
+int readtext(string storyline)
 {
 	string line;
 	ifstream myfile ("game.txt");
@@ -226,17 +227,19 @@ void readtext(string storyline)
 	
 	int foundat;
 	
+	int story_mode = 0;
+	
 	if (myfile.is_open())
 	{
 		while(getline(myfile,line))
 		{
-			
 			linenumber++;
 			
 			line = removewhitespace(line);
+			line = fixtext(line,false);
 			
 			if(line == storyline)
-				instory = 1;
+				instory = 1;			
 			if(line[0] == '{' && instory == 1)
 				instory = 2;
 			if(line[0] == '}')
@@ -244,7 +247,7 @@ void readtext(string storyline)
 			
 			if(line.find("text: ") == 0 && instory == 2)
 			{
-				line = fixtext(line);
+				line = fixtext(line,true);
 				line = line.erase(0, 6);
 				
 				cout << line << endl;
@@ -256,7 +259,7 @@ void readtext(string storyline)
 			{
 				if(hastitle)
 				{
-					line = fixtext(line);
+					line = fixtext(line,true);
 					foundat = line.find_last_of("|");
 					line.erase(0, foundat+1);
 					
@@ -271,7 +274,7 @@ void readtext(string storyline)
 			{
 				if(hastitle)
 				{
-					line = fixtext(line);
+					line = fixtext(line,true);
 					line = line.erase(0, 8);
 					cout << "	" << options << ". " << line << endl;
 					options++;
@@ -283,12 +286,17 @@ void readtext(string storyline)
 			else if(line.find("info: ") == 0 && instory == 2)
 			{
 				line.erase(0,6);
-				cout << fixtext(line) << endl;
+				cout << fixtext(line,true) << endl;
+			}
+			else if(line.find("mode: choose first") == 0 && instory == 2)
+			{
+				line.erase(0,17);
+				story_mode = 1;
 			}
 		}
 		myfile.close();
 	}
-	return;
+	return story_mode;
 }
 
 bool doaction(string action)
@@ -296,7 +304,7 @@ bool doaction(string action)
 	bool didaction = false;
 	
 	action = removewhitespace(action);
-	action = fixtext(action);
+	action = fixtext(action,true);
 	
 	if(action.find("endgame: ") == 0)
 	{
@@ -401,6 +409,8 @@ bool doaction(string action)
 
 int main() 
 {
+	srand(time(NULL));
+	
 	if(!initstory())
 	{
 		cout << "Error reading game.txt: \n" << errormessage << endl;
@@ -411,26 +421,27 @@ int main()
 		player.storyline = player.neededinfo[0];
 	
 	titlesequence();
-	 
+	
 	while(player.playing && errormessage == "")
 	{
 		cout << endl;
 		
 		int options = getoptions(player.storyline);
+		int chosenint = 0;
 		
-		readtext(player.storyline);
+		int gamemode = readtext(player.storyline) != 0;
 		
-		int chosenint;
+		if(gamemode != 0)
+			chosenint = 1;
 		
 		if(options == 0)
 			chosenint = 0;
-		else
+		else if(chosenint == 0)
 			chosenint = getresponse(options);
-			
-		getaction(chosenint);
-		
-	}
 
+		getaction(chosenint);
+	}
+	
 	if(errormessage != "")
 		cout << "Error reading game.txt: \n" << errormessage << endl;
 	

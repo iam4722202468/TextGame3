@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include <unistd.h>
+
 #include "main.h"
 #include "error.h"
 #include "player.h"
@@ -26,7 +28,6 @@ int getamount(string itemname)
 //returns a var value, works similarly to getamount
 int getvar(string varname)
 {
-
 	for(int place = 0; place < player.varname.size(); place++)
 		if(player.varname.at(place) == varname)
 			return place;
@@ -48,6 +49,7 @@ int getoptions(string storyline)
 		while(getline(myfile,line))
 		{
 			line = removewhitespace(line);
+			line = fixtext(line,false);
 			
 			if(line == player.storyline)
 				isgood = 1;
@@ -74,7 +76,7 @@ int getresponse(int options)
 	
 	while (chosenint < 1 || chosenint > options)
 	{
-		cout << "\nWhat path would you like to choose? ";
+		usleep(500);
 		if (!cin) 
 		{
 			cin.clear();
@@ -103,7 +105,6 @@ int getitemamount()
 	return amountofitems;
 }
 
-
 void getaction(int chosenoption)
 {
 	string line;
@@ -120,6 +121,7 @@ void getaction(int chosenoption)
 		while(getline(myfile,line))
 		{
 			line = removewhitespace(line);
+			line = fixtext(line,false);
 			
 			linenumber++;
 			if(line == player.storyline)
@@ -136,12 +138,13 @@ void getaction(int chosenoption)
 				options++;
 			else if(line.find("option_condition: ") == 0 && isgood == 2 && checkcondition(line))
 				options++;			
-				
+			
 			else if((options == chosenoption || chosenoption == 0) && isgood == 2)
 			{
 				do
 				{
 					line = removewhitespace(line);
+					line = fixtext(line,true);
 
 					if(line.find("option_condition") == 0 || line.find("option") == 0 || line.find("}") == 0)
 					{
