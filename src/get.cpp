@@ -135,11 +135,6 @@ void getaction(int chosenoption)
 					isgood = 1;
 				else if(line[0] == '{' && isgood == 1)
 					isgood = 2;
-				else if(line[0] == '}')
-				{
-					isgood = 0;
-					options = 0;
-				}
 				
 				else if(line.find("option: ") == 0 && isgood == 2)
 					options++;

@@ -249,10 +249,9 @@ int readtext(string storyline)
 				{
 					line = fixtext(line,true);
 					line = line.erase(0, 6);
-					
-					cout << line << endl;
+					if(line != "")
+						cout << line << endl;
 					hastitle = true;
-					options = 1;
 				}
 				
 				else if(line.find("option_condition: ") == 0 && instory == 2 && checkcondition(line))
