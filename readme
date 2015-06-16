@@ -220,6 +220,10 @@ command		:: Run a command. Commands available:
 				- clearinv, clearvariables, resetplayer (reset the file header variables)
 			:: command: (command)
 			:: command: resetplayer
+			
+include		:: Include a file
+			:: include: (file name)
+			:: include: moo.txt
 
 ________________________________________
 Part 7. Macros                    
@@ -256,9 +260,23 @@ VAR			:: Returns the value of a variable. Returns NULL if variable is not set
 INPUT		:: Prompts the player to input text
 			:: var: moo|$(INPUT|	Please input moo: )|
 
-________________________________________
+__________________________________
 Part 8. Modes                    
 ________________________________________
 
 mode: chose first
 	makes the program chose the first possible option by default
+
+________________________________________
+Part 9. Include statements                    
+________________________________________
+
+~~~~~~~~~~
+//interpreter created by iam//
+
+include: moo
+include: moo/moo.txt
+~~~~~~~~~~
+
+include statements must go at the beginning of the file, before the first storyline name.
+They allow you to 'include' other text files, meaning that they are added to the files that the interpreter searches when looking for story lines and options.
