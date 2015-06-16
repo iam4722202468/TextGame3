@@ -251,21 +251,25 @@ void printitems()
 
 //checks to see if storyline exists
 bool findstoryline(string storyline)
-{	
+{
 	string line;
-	ifstream myfile ("game.txt");
 	bool foundstoryline = false;
 	
-	if (myfile.is_open())
+	for(int filename = 0; filename < player.includes.size(); filename++)
 	{
-		while(getline(myfile,line))
+		ifstream myfile(player.includes.at(filename));
+		
+		if (myfile.is_open())
 		{
-			line = removewhitespace(line);
-			if(line[0] == ';')
-				line = fixtext(line,true);
-			
-			if(line.find(storyline) == 0)
-				foundstoryline = true;
+			while(getline(myfile,line))
+			{
+				line = removewhitespace(line);
+				if(line[0] == ';')
+					line = fixtext(line,true);
+				
+				if(line.find(storyline) == 0)
+					foundstoryline = true;
+			}
 		}
 	}
 	

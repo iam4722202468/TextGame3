@@ -24,20 +24,22 @@ bool checkstoryinfo()
 	else return false;
 }
 
-bool checkstory()
+bool checkstory(string filename)
 {
 	bool isgood = true;
 	char lastchar = ' ';
 	int linenumber = 0;
 	bool hastitle = false;
-	bool startpoint = false;
 	vector<int> semicolonplaces;
+	bool startpoint = false;
+	
+	bool pastfirsttitle = false;
 	
 	//newline makes it look nice ;)
 	cout << endl;
 	
 	string line;
-	ifstream myfile ("game.txt");
+	ifstream myfile(filename);
 	
 	//read through file and look for stuff that might cause problems during runtime
 	if (myfile.is_open())
@@ -49,7 +51,7 @@ bool checkstory()
 			if(linenumber == 1 && line != "//interpreter created by iam//")
 			{
 				isgood = false;
-				errormessage += "Error: Please start the file with '//interpreter created by iam//'\n";
+				errormessage += "Error: Please start the file with '//interpreter created by iam//' in " + filename + "\n";
 			}
 			
 			//removes whitespace from the beginning part of the line (until : is found)
@@ -57,7 +59,16 @@ bool checkstory()
 			
 			//check to see if the line ends with a space or a tab
 			if(line.back() == '	' or line.back() == ' ')
-				cout << "Warning: Space/Tab found at end of line " << linenumber << endl;
+				cout << "Warning: Space/Tab found at end of line " << linenumber << " in " << filename << endl;
+			
+			if(line.find("include: ") == 0 && !pastfirsttitle)
+			{
+				line.erase(0, 9);
+				if(checkstory(line))
+					player.includes.push_back(line);
+				else
+					isgood = false;
+			}
 			
 			//finds story titles
 			if(line[0] == ';' && line[line.length()-1] == ';')
@@ -65,9 +76,13 @@ bool checkstory()
 				if(hastitle)
 				{
 					isgood = false;
-					errormessage += "Error: Double scenario name on line " + to_string(linenumber) + "\n";
+					errormessage += "Error: Double scenario name on line " + to_string(linenumber) + " in " + filename + "\n";
 				}
-				else hastitle = true;
+				else 
+				{
+					hastitle = true;
+					pastfirsttitle = true;
+				}
 				
 				if(line.find(player.neededinfo[0]) != string::npos)
 					startpoint = true;
@@ -86,22 +101,22 @@ bool checkstory()
 				isgood = false;
 				
 				if(hastitle)
-					errormessage += "Error: bracket error on line " + to_string(linenumber) + "\n";
+					errormessage += "Error: bracket error on line " + to_string(linenumber) + " in " + filename + "\n";
 				else if(line[0] == '{')
-					errormessage += "Error: Scenario name missing before line " + to_string(linenumber) + "\n";
+					errormessage += "Error: Scenario name missing before line " + to_string(linenumber) + " in " + filename + "\n";
 				else
-					errormessage += "Error: Extra bracket on line " + to_string(linenumber) + "\n";
+					errormessage += "Error: Extra bracket on line " + to_string(linenumber) + " in " + filename + "\n";
 			}
 		}
 	}
 	
 	if(lastchar == '{')
 	{
-		errormessage += "Error: missing bracket at end of file\n";
+		errormessage += "Error: missing bracket at end of " + filename + "\n";
 		isgood = false;
 	}
 	
-	if(!startpoint)
+	if(!startpoint && filename == "game.txt")
 	{
 		errormessage += "Error: startpoint not found\n";
 		isgood = false;
@@ -113,19 +128,19 @@ bool checkstory()
 		return false;
 }
 
-bool initstory()
+bool initstory(string filename)
 {
 	int textlen;
 	
 	string line;
-	ifstream myfile ("game.txt");
+	ifstream myfile (filename);
 	
-	if (myfile.is_open())
+	if (myfile.is_open() && filename == "game.txt")
 	{
 		while(getline(myfile,line))
 		{
 			line = removewhitespace(line);
-
+			
 			for(int place = 0; place < player.length_n_info; place++)
 			{
 				if (line.find(player.look_neededinfo[place]) == 0) 
@@ -147,7 +162,7 @@ bool initstory()
 		myfile.close();
 	}
 	
-	if(checkstory() && checkstoryinfo())
+	if(checkstory(filename) && checkstoryinfo())
 		return true;
 	else return false;
 }

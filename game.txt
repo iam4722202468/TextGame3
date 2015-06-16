@@ -4,11 +4,22 @@ health: 100
 playername: Science
 startpoint: ;setup;
 
-include: 
-
 ;setup;
 {
 	text: Pick one
 		option: test this file
 		option: test another file
+			include: moo.txt
+}
+
+;setup.1;
+{
+	text: you picked 1
+	endgame: moo
+}
+
+;setup.2;
+{
+	text: you picked 2
+	endgame: moo
 }

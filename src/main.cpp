@@ -216,86 +216,88 @@ bool checkcondition(string line)
 int readtext(string storyline)
 {
 	string line;
-	ifstream myfile ("game.txt");
 	
 	int options = 1;
-	
-	int linenumber = 0;
-	
-	bool hastitle = false;
-	int instory = 0;
-	
+		
 	int foundat;
-	
 	int story_mode = 0;
-	
-	if (myfile.is_open())
+		
+	for(int filename = 0; filename < player.includes.size(); filename++)
 	{
-		while(getline(myfile,line))
+		ifstream myfile(player.includes.at(filename));
+		if (myfile.is_open())
 		{
-			linenumber++;
+			int linenumber = 0;
+			int instory = 0;
+			bool hastitle = false;
 			
-			line = removewhitespace(line);
-			line = fixtext(line,false);
-			
-			if(line == storyline)
-				instory = 1;			
-			if(line[0] == '{' && instory == 1)
-				instory = 2;
-			if(line[0] == '}')
-				instory = 0;
-			
-			if(line.find("text: ") == 0 && instory == 2)
+			while(getline(myfile,line))
 			{
-				line = fixtext(line,true);
-				line = line.erase(0, 6);
+				linenumber++;
 				
-				cout << line << endl;
-				hastitle = true;
-				options = 1;
-			}
-			
-			else if(line.find("option_condition: ") == 0 && instory == 2 && checkcondition(line))
-			{
-				if(hastitle)
+				line = removewhitespace(line);
+				line = fixtext(line,false);
+				
+				if(line == storyline)
+					instory = 1;			
+				if(line[0] == '{' && instory == 1)
+					instory = 2;
+				if(line[0] == '}')
+					instory = 0;
+				
+				if(line.find("text: ") == 0 && instory == 2)
 				{
 					line = fixtext(line,true);
-					foundat = line.find_last_of("|");
-					line.erase(0, foundat+1);
+					line = line.erase(0, 6);
 					
-					cout << "	" << options << ". " << line << endl;
-					options++;
+					cout << line << endl;
+					hastitle = true;
+					options = 1;
 				}
-				else
-					errormessage += "Error: No text line found before line " + to_string(linenumber) + "\n";
-			}
-			
-			else if(line.find("option: ") == 0 && instory == 2)
-			{
-				if(hastitle)
+				
+				else if(line.find("option_condition: ") == 0 && instory == 2 && checkcondition(line))
 				{
-					line = fixtext(line,true);
-					line = line.erase(0, 8);
-					cout << "	" << options << ". " << line << endl;
-					options++;
+					if(hastitle)
+					{
+						line = fixtext(line,true);
+						foundat = line.find_last_of("|");
+						line.erase(0, foundat+1);
+						
+						cout << "	" << options << ". " << line << endl;
+						options++;
+					}
+					else
+						errormessage += "Error: No text line found before line " + to_string(linenumber) + "\n";
 				}
-				else
-					errormessage += "Error: No text line found before line " + to_string(linenumber) + "\n";
+				
+				else if(line.find("option: ") == 0 && instory == 2)
+				{
+					if(hastitle)
+					{
+						line = fixtext(line,true);
+						line = line.erase(0, 8);
+						cout << "	" << options << ". " << line << endl;
+						options++;
+					}
+					else
+						errormessage += "Error: No text line found before line " + to_string(linenumber) + "\n";
+				}
+				
+				else if(line.find("info: ") == 0 && instory == 2)
+				{
+					line.erase(0,6);
+					cout << fixtext(line,true) << endl;
+				}
+				else if(line.find("mode: choose first") == 0 && instory == 2)
+				{
+					line.erase(0,17);
+					story_mode = 1;
+				}
 			}
-			
-			else if(line.find("info: ") == 0 && instory == 2)
-			{
-				line.erase(0,6);
-				cout << fixtext(line,true) << endl;
-			}
-			else if(line.find("mode: choose first") == 0 && instory == 2)
-			{
-				line.erase(0,17);
-				story_mode = 1;
-			}
+			myfile.close();
 		}
-		myfile.close();
 	}
+	
 	return story_mode;
 }
 
@@ -404,6 +406,12 @@ bool doaction(string action)
 		action.erase(0,9);
 		docommand(action);
 	}
+	else if(action.find("include: ") == 0)
+	{
+		action.erase(0,9);
+		if(checkstory(action))
+			player.includes.push_back(action);
+	}
 	return didaction;	
 }
 
@@ -411,11 +419,13 @@ int main()
 {
 	srand(time(NULL));
 	
-	if(!initstory())
+	if(!initstory("game.txt"))
 	{
 		cout << "Error reading game.txt: \n" << errormessage << endl;
 		return 0;
 	}
+	
+	player.includes.push_back("game.txt");
 	
 	if(findstoryline(player.neededinfo[0]))
 		player.storyline = player.neededinfo[0];

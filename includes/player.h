@@ -20,6 +20,7 @@ struct storyinfo
 	//vectors for inventory
 	vector<string> inventory;
 	vector<int> invamount;
+	vector<string> includes;
 	
 	string storyline;
 	
@@ -29,6 +30,7 @@ struct storyinfo
 	bool playing = true;
 	
 	bool shouldbreak = false;
+	
 } extern player;
 
 #endif

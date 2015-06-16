@@ -297,7 +297,7 @@ void docommand(string text)
 		player.varvalue.clear();
 	}
 	else if(info.at(0) == "resetplayer")
-		initstory();
+		initstory("game.txt");
 	
 	return;
 }

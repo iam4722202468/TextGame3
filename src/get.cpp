@@ -42,28 +42,32 @@ int getoptions(string storyline)
 	int isgood = 0;
 	
 	string line;
-	ifstream myfile ("game.txt");
 	
-	if (myfile.is_open())
+	for(int filename = 0; filename < player.includes.size(); filename++)
 	{
-		while(getline(myfile,line))
+		ifstream myfile(player.includes.at(filename));
+		
+		if (myfile.is_open())
 		{
-			line = removewhitespace(line);
-			line = fixtext(line,false);
-			
-			if(line == player.storyline)
-				isgood = 1;
-			if(line[0] == '{' && isgood == 1)
-				isgood = 2;
-			if(line[0] == '}')
-				isgood = 0;
-			if(line.find("option: ") == 0 && isgood == 2)
-				options++;
-			if(line.find("option_condition: ") == 0 && isgood == 2 && checkcondition(line))
-				options++;
+			while(getline(myfile,line))
+			{
+				line = removewhitespace(line);
+				line = fixtext(line,false);
+				
+				if(line == player.storyline)
+					isgood = 1;
+				if(line[0] == '{' && isgood == 1)
+					isgood = 2;
+				if(line[0] == '}')
+					isgood = 0;
+				if(line.find("option: ") == 0 && isgood == 2)
+					options++;
+				if(line.find("option_condition: ") == 0 && isgood == 2 && checkcondition(line))
+					options++;
 
+			}
+			myfile.close();
 		}
-		myfile.close();
 	}
 	
 	return options;
@@ -108,60 +112,64 @@ int getitemamount()
 void getaction(int chosenoption)
 {
 	string line;
-	ifstream myfile ("game.txt");
 	
 	int options = 0;
 	int isgood = 0;
 	bool didaction = false;
 	
-	int linenumber = 0;
-	
-	if (myfile.is_open())
+	for(int filename = 0; filename < player.includes.size(); filename++)
 	{
-		while(getline(myfile,line))
+		ifstream myfile(player.includes.at(filename));
+		
+		int linenumber = 0;
+		
+		if (myfile.is_open())
 		{
-			line = removewhitespace(line);
-			line = fixtext(line,false);
-			
-			linenumber++;
-			if(line == player.storyline)
-				isgood = 1;
-			else if(line[0] == '{' && isgood == 1)
-				isgood = 2;
-			else if(line[0] == '}')
+			while(getline(myfile,line))
 			{
-				isgood = 0;
-				options = 0;
-			}
-			
-			else if(line.find("option: ") == 0 && isgood == 2)
-				options++;
-			else if(line.find("option_condition: ") == 0 && isgood == 2 && checkcondition(line))
-				options++;			
-			
-			else if((options == chosenoption || chosenoption == 0) && isgood == 2)
-			{
-				do
+				line = removewhitespace(line);
+				line = fixtext(line,false);
+				
+				linenumber++;
+				if(line == player.storyline)
+					isgood = 1;
+				else if(line[0] == '{' && isgood == 1)
+					isgood = 2;
+				else if(line[0] == '}')
 				{
-					line = removewhitespace(line);
-					line = fixtext(line,true);
-
-					if(line.find("option_condition") == 0 || line.find("option") == 0 || line.find("}") == 0)
+					isgood = 0;
+					options = 0;
+				}
+				
+				else if(line.find("option: ") == 0 && isgood == 2)
+					options++;
+				else if(line.find("option_condition: ") == 0 && isgood == 2 && checkcondition(line))
+					options++;			
+				
+				else if((options == chosenoption || chosenoption == 0) && isgood == 2)
+				{
+					do
 					{
-						isgood = 0;
-						break;
-					}
-					if(doaction(line))
-						didaction = true;
-				}while (getline(myfile,line));
+						line = removewhitespace(line);
+						line = fixtext(line,true);
+
+						if(line.find("option_condition") == 0 || line.find("option") == 0 || line.find("}") == 0)
+						{
+							isgood = 0;
+							break;
+						}
+						if(doaction(line))
+							didaction = true;
+					}while (getline(myfile,line));
+				}
+				if(player.shouldbreak)
+				{
+					player.shouldbreak = false;
+					break;
+				}
 			}
-			if(player.shouldbreak)
-			{
-				player.shouldbreak = false;
-				break;
-			}
+			myfile.close();
 		}
-		myfile.close();
 	}
 	
 	string storyline = player.storyline;

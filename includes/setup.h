@@ -4,9 +4,9 @@
 #include <string>
 using namespace std;
 
-bool checkstory();
+bool checkstory(string filename);
 bool checkstoryinfo();
-bool initstory();
+bool initstory(string filename);
 void titlesequence();
 
 #endif
