@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <vector>
+#include <unistd.h>
 
 #include "get.h"
 #include "error.h"
@@ -215,11 +216,21 @@ string fixtext(string line, bool include_input)
 		
 		cout << "\n" << text;
 		
-		string inputtext;
+		string inputtext = "";
 		
-		cin.ignore(0);
-		getline(cin, inputtext);
-
+		while(inputtext == "")
+		{
+			usleep(500);
+			
+			if (!cin) 
+			{
+				cin.clear();
+				cin.ignore(256, '\n');
+			}
+			
+			getline(cin, inputtext);
+		}
+		
 		line.insert(found.at(0), inputtext);
 		
 		cout << endl;

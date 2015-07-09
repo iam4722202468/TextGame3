@@ -8,6 +8,7 @@ startpoint: ;setup;
 {
 	text: fork in the road
 		option: test 1
+			var: moo|$(INPUT|	Please input moo: )|
 		option: test 2
 }
 
