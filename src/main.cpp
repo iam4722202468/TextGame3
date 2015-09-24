@@ -1,3 +1,5 @@
+//Copyright 2015 iam
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -130,6 +132,8 @@ bool checkcondition(string line)
 			if(not inverted)
 				return true;
 		}
+		else if(varplace == -1 && info.at(2) == "NULL")
+			return true;
 		else
 			if(inverted)
 				return true;
@@ -146,6 +150,12 @@ bool checkcondition(string line)
 			if(not inverted)
 				return true;
 		}
+		else if(varplace1 == -1 && info.at(2) == "NULL" && varplace2 >= 0 && player.varvalue.at(getvar(info.at(3))) == info.at(4))
+			return true;
+		else if(varplace2 == -1 && info.at(4) == "NULL" && varplace1 >= 0 && player.varvalue.at(getvar(info.at(1))) == info.at(2))
+			return true;
+		else if(varplace2 == -1 && info.at(4) == "NULL" && varplace1 == -1 && info.at(2) == "NULL")
+			return true;
 		else
 			if(inverted)
 				return true;
@@ -161,6 +171,8 @@ bool checkcondition(string line)
 			if(not inverted)
 				return true;
 		}
+		else if((varplace2 == -1 && info.at(4) == "NULL") || (varplace1 == -1 && info.at(2) == "NULL"))
+			return true;
 		else
 			if(inverted)
 				return true;
@@ -176,36 +188,12 @@ bool checkcondition(string line)
 			if(not inverted)
 				return true;
 		}
-		else
-			if(inverted)
-				return true;
-	}
-	
-	else if(info.at(0) == "var_nand" && info.size() == 6)
-	{
-		int varplace1 = getvar(info.at(1));
-		int varplace2 = getvar(info.at(3));
-		
-		if(varplace1 >= 0 && varplace2 >= 0 && not ((player.varvalue.at(getvar(info.at(1))) == info.at(2)) && (player.varvalue.at(getvar(info.at(3))) == info.at(4))))
-		{
-			if(not inverted)
-				return true;
-		}
-		else
-			if(inverted)
-				return true;
-	}
-	
-	else if(info.at(0) == "var_nor" && info.size() == 6)
-	{
-		int varplace1 = getvar(info.at(1));
-		int varplace2 = getvar(info.at(3));
-		
-		if(varplace1 >= 0 && varplace2 >= 0 && (not (player.varvalue.at(getvar(info.at(1))) == info.at(2)) && not (player.varvalue.at(getvar(info.at(3))) == info.at(4))))
-		{
-			if(not inverted)
-				return true;
-		}
+		else if(varplace1 == -1 && info.at(2) == "NULL" && varplace2 >= 0 && not(player.varvalue.at(getvar(info.at(3))) == info.at(4)))
+			return true;
+		else if(not (varplace2 == -1 && info.at(4) == "NULL") && varplace1 >= 0 && player.varvalue.at(getvar(info.at(1))) == info.at(2))
+			return true;
+		else if(not (varplace2 == -1 && info.at(4) == "NULL") && varplace1 == -1 && info.at(2) == "NULL")
+			return true;
 		else
 			if(inverted)
 				return true;
@@ -278,7 +266,7 @@ int readtext(string storyline)
 						cout << "	" << options << ". " << line << endl;
 						options++;
 					}
-					else
+					else if (!story_mode)
 						errormessage += "Error: No text line found before line " + to_string(linenumber) + "\n";
 				}
 				
@@ -450,6 +438,11 @@ int main()
 
 		getaction(chosenint);
 	}
+	
+	if(printitems() == "")
+		cout << "log: " << player.storyline << " items: none" << endl;
+	else
+		cout << "log: " << player.storyline << " items: " << printitems() << endl;
 	
 	if(errormessage != "")
 		cout << "Error reading game.txt: \n" << errormessage << endl;

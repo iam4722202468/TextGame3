@@ -8,7 +8,7 @@ string removewhitespace(string str);
 void search(string haystack, string needle, vector<int>& foundat);
 void stringsplit(char splitat, string line, vector<string>& newtext);
 string fixtext(string line, bool include_input);
-void printitems();
+string printitems();
 bool findstoryline(string storyline);
 
 #endif

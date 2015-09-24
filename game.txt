@@ -1,25 +1,15 @@
 //interpreter created by iam//
 
 health: 100
-playername: moo
 startpoint: ;setup;
+maxinventory: 5000
 
 ;setup;
 {
 	text: fork in the road
-		option: test 1
-			var: moo|$(INPUT|	Please input moo: )|
-		option: test 2
-}
-
-;setup.1;
-{
-	text: you choose 1
-		endgame: moo
-}
-
-;setup.2;
-{
-	text: you choose 2
+	option: item
+		item: moo
+		goto: ;setup;
+	option: end game
 		endgame: moo
 }

@@ -1,3 +1,5 @@
+//Copyright 2015 iam
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -58,8 +60,8 @@ bool checkstory(string filename)
 			line = removewhitespace(line);
 			
 			//check to see if the line ends with a space or a tab
-			if(line.back() == '	' or line.back() == ' ')
-				cout << "Warning: Space/Tab found at end of line " << linenumber << " in " << filename << endl;
+			//if(line.back() == '	' or line.back() == ' ')
+				//cout << "Warning: Space/Tab found at end of line " << linenumber << " in " << filename << endl;
 			
 			if(line.find("include: ") == 0 && !pastfirsttitle)
 			{

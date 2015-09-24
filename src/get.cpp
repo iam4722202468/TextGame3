@@ -1,3 +1,5 @@
+//Copyright 2015 iam
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -77,6 +79,7 @@ int getoptions(string storyline)
 int getresponse(int options)
 {
 	int chosenint = -1;
+	std::string chosenintString;
 	
 	while (chosenint < 1 || chosenint > options)
 	{
@@ -86,15 +89,27 @@ int getresponse(int options)
 			cin.clear();
 			cin.ignore(256, '\n');
 		}
-		cin >> chosenint;
+		std::getline(std::cin,chosenintString);
 		
+		try
+		{
+			chosenint = stoi(chosenintString);
+		}
+		catch(...)
+		{
+			chosenint = -1;
+		}
+		
+		cin.clear();
 		if(chosenint == 0)
 		{
-			printitems();
+			if(printitems() == "")
+				cout << "You currently have no items\n";
+			else
+				cout << "You have: " << printitems() << endl;
 			cout << "Your health is " << player.neededinfo[1] << endl;
 		}
 	}
-	
 	
 	return chosenint;
 }

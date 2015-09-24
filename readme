@@ -134,12 +134,6 @@ var_or				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
 					
 var_not				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
 					:: logical NOT for 2 conditions
-					
-var_nand			:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
-					:: logical NAND for 2 conditions
-
-var_nor				:: var|(var1 name)|(var1 value)|(var2 name)|(var2 value)|(text)|
-					:: logical NOR for 2 conditions
 
 ________________________________________
 Part 5. Info lines

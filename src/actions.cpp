@@ -1,3 +1,5 @@
+//Copyright 2015 iam
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -24,7 +26,7 @@ void useitem(string itemname, int mode)
 	vector<string> parts;
 	stringsplit('|', itemname, parts);
 	 
-	if(parts.size() == 2)
+	if(parts.size() >= 2)
 		amount = stoi(parts.at(0));
 	else
 		parts.push_back(parts.at(0));

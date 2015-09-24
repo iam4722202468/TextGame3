@@ -1,3 +1,5 @@
+//Copyright 2015 iam
+
 #include <iostream>
 #include <fstream>
 
@@ -240,24 +242,24 @@ string fixtext(string line, bool include_input)
 }
 
 //prints a list of the player's items
-void printitems()
+string printitems()
 {
+	string itemlist = "";
 	if(player.inventory.size() == 0)
-		cout << "You currently have no items\n";
+		return "";
 	else
 	{ 
-		cout << "You have: ";
 		for(int place = 0; place < player.inventory.size(); place++)
 		{
 			if(player.invamount.at(place) > 1)
-				cout << player.invamount.at(place) << " " << player.inventory.at(place) << "s, ";
+				itemlist += to_string(player.invamount.at(place)) + " " + player.inventory.at(place) + "s, ";
 			else
-				cout << player.invamount.at(place) << " " << player.inventory.at(place) << ", ";
+				itemlist += to_string(player.invamount.at(place)) + " " + player.inventory.at(place) + ", ";
 				
 		}
 		cout << endl;
 	}
-	return;
+	return itemlist;
 }
 
 //checks to see if storyline exists
